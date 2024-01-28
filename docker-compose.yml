@@ -1,0 +1,72 @@
+version: '3'
+services:
+
+  # Nginx Service
+#  nginx:
+#    image: nginx:1.25
+#    container_name: nginx
+#    restart: always
+#    ports:
+#      - "${NGINX_PORT_HOST}:${NGINX_PORT_REMOTE}"  # Перенаправление портов
+#      - "${NGINX_PORT_SSL_HOST}:${NGINX_PORT_SSL_REMOTE}"  # Перенаправление защищенных портов
+#    volumes:
+#      - './html:/usr/share/nginx/html'  # Монтирование папки HTML
+#      - './nginx/nginx/conf.d:/etc/nginx/conf.d'  # Монтирование конфигураций Nginx
+#      - './nginx/nginx:/etc/nginx'  # Монтирование папки конфигурации Nginx
+#      - './nginx/log:/log'  # Монтирование логов Nginx
+#    healthcheck:  # Проверка состояния сервиса
+#      test: [ "CMD", "curl", "-f", "http://${DOMAIN}" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#    environment:
+#      NGINX_PORT_HOST: ${NGINX_PORT_HOST}
+#      NGINX_PORT_REMOTE: ${NGINX_PORT_REMOTE}
+#      NGINX_PORT_SSL_HOST: ${NGINX_PORT_SSL_HOST}
+#      NGINX_PORT_SSL_REMOTE: ${NGINX_PORT_SSL_REMOTE}
+#      DOMAIN: ${DOMAIN}
+
+  # PostgresDB Service
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    ports:
+      - ${POSTGRES_PORT_HOST}:${POSTGRES_PORT_REMOTE}
+    volumes:
+      - './volume/postgres:/var/lib/postgresql/data'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: "hardware_hunt"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD} # Добавление переменной окружения для пароля суперпользователя
+      POSTGRES_PORT_HOST: ${POSTGRES_PORT_HOST}
+      POSTGRES_PORT_REMOTE: ${POSTGRES_PORT_REMOTE}
+      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+# Go API Service
+#  scrapper_auto_ru:
+#    build:
+#      context: .
+#      dockerfile: DockerfileScrapperAutoRu
+#    container_name: scrapper_auto_ru
+#    restart: always
+#    ports:
+#      - "${GO_API_PORT_HOST}:${GO_API_PORT_REMOTE}"  # Перенаправление портов
+#    volumes:
+#      - './logs.log:/app/logs.log'  # Монтирование файла логов
+#    depends_on:
+#      - nginx
+#      - postgres
+#    healthcheck:  # Проверка состояния сервиса
+#      test: [ "CMD", "curl", "-f", "http://${DOMAIN}:${GO_API_PORT_HOST}/scrapper_auto_ru/" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#    environment:
+#      GO_API_PORT_HOST: ${GO_API_PORT_HOST}
+#      GO_API_PORT_REMOTE: ${GO_API_PORT_REMOTE}
+#      DOMAIN: ${DOMAIN}

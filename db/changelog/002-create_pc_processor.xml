@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Создание таблицы для основных данных о процессоре -->
+    <changeSet author="neo" id="2">
+        <createTable tableName="pc_processor">
+            <!-- Идентификатор процессора -->
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <!-- Ссылка на товар -->
+            <column name="link" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <!-- Линейка процессора (например, Celeron Dual-Core) -->
+            <column name="line" type="varchar(255)"/>
+            <!-- Модель процессора (например, G1840) -->
+            <column name="model" type="varchar(255)"/>
+            <!-- Ядро процессора (например, Haswell) -->
+            <column name="core" type="varchar(255)"/>
+            <!-- Количество ядер -->
+            <column name="num_cores" type="int"/>
+            <!-- Производитель (например, Intel) -->
+            <column name="manufacturer" type="varchar(255)"/>
+            <!-- Код производителя -->
+            <column name="manufacturer_code" type="varchar(255)"/>
+            <!-- Сокет процессора (например, LGA 1150) -->
+            <column name="socket" type="varchar(255)"/>
+
+            <!-- Дополнительные данные о процессоре -->
+            <!-- Типичное тепловыделение процессора -->
+            <column name="thermal_power" type="int"/>
+            <!-- Сайт производителя -->
+            <column name="manufacturer_website" type="varchar(255)"/>
+            <!-- Технологический процесс процессора -->
+            <column name="technology_process" type="int"/>
+            <!-- Технологии, поддерживаемые процессором -->
+            <column name="technologies" type="varchar(255)"/>
+            <!-- Тип поставки процессора (например, OEM) -->
+            <column name="delivery_type" type="varchar(255)"/>
+
+            <!-- Кэш процессора -->
+            <!-- Объем кэша L1 -->
+            <column name="l1_cache_volume" type="double"/>
+            <!-- Объем кэша L2 -->
+            <column name="l2_cache_volume" type="double"/>
+            <!-- Объем кэша L3 -->
+            <column name="l3_cache_volume" type="double"/>
+
+            <!-- Видеоинформация процессора -->
+            <!-- Имеется ли интегрированное графическое ядро -->
+            <column name="integrated_graphics" type="boolean"/>
+            <!-- Видеопроцессор процессора -->
+            <column name="video_processor" type="varchar(255)"/>
+
+            <!-- Цены на процессор -->
+            <!-- Новая цена -->
+            <column name="new_price" type="double"/>
+            <!-- Старая цена -->
+            <column name="old_price" type="double"/>
+            <!-- Дата доступности процессора -->
+            <column name="availability_date" type="varchar(255)"/>
+            <!-- Местоположение процессора -->
+            <column name="city" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <sql splitStatements="true">
+            ALTER TABLE pc_processor
+            ALTER COLUMN created_at SET DEFAULT NOW(),
+            ALTER COLUMN updated_at SET DEFAULT NOW();
+
+            CREATE TRIGGER set_timestamp
+            BEFORE
+            UPDATE ON pc_processor
+            FOR EACH ROW
+            EXECUTE PROCEDURE trigger_set_timestamp();
+        </sql>
+
+        <!-- Откат создания таблицы. -->
+        <rollback>
+            <dropTable tableName="pc_processor"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Создание таблицы pc_images -->
+    <changeSet author="neo" id="create_pc_images_table">
+        <createTable tableName="pc_images">
+
+            <!-- Уникальный идентификатор картинки -->
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Тип компонента (1 - "processor", 2 - "videocard" и т.д.) -->
+            <column name="component_type_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Идентификатор компонента, к которому относится картинка -->
+            <column name="component_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Путь к файлу с картинкой -->
+            <column name="path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <sql splitStatements="true">
+            ALTER TABLE pc_images
+            ALTER COLUMN created_at SET DEFAULT NOW(),
+            ALTER COLUMN updated_at SET DEFAULT NOW();
+
+            CREATE TRIGGER set_timestamp
+            BEFORE
+            UPDATE ON pc_images
+            FOR EACH ROW
+            EXECUTE PROCEDURE trigger_set_timestamp();
+        </sql>
+
+        <!-- Откат создания таблицы. -->
+        <rollback>
+            <dropTable tableName="pc_images"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,28 @@
+# Используйте официальный образ Golang
+FROM golang:1.21.3
+
+# Установка переменных среды из .env файла
+ARG GO_API_PORT_REMOTE
+ENV GO_API_PORT_REMOTE=${GO_API_PORT_REMOTE}
+
+# Установка переменных среды DOMAIN
+ARG DOMAIN
+ENV DOMAIN=${DOMAIN}
+
+# Создайте директорию приложения внутри контейнера
+WORKDIR /app
+
+# Удалите все файлы из директории ./go в контейнере
+RUN rm -rf ./go/*
+
+# Скопируйте только нужные файлы из ./go_api в директорию ./go в контейнере
+COPY . .
+
+# Сборка приложения
+RUN go build -o main ./cmd/scraper/main.go
+
+# Открытие порта, на котором будет работать приложение
+EXPOSE ${GO_API_PORT_REMOTE}
+
+# Запуск приложения
+CMD ["./main"]

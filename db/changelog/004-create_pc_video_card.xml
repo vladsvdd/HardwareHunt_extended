@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Создание таблицы для основных данных о процессоре -->
+    <changeSet author="neo" id="4">
+        <createTable tableName="pc_video_card">
+
+            <!-- Уникальный идентификатор записи -->
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Основные характеристики видеокарты -->
+            <column name="series" type="VARCHAR(255)">
+                <!-- Серия видеокарты -->
+            </column>
+            <column name="processor_manufacturer" type="VARCHAR(255)">
+                <!-- Производитель видеопроцессора -->
+            </column>
+            <column name="manufacturer" type="VARCHAR(255)">
+                <!-- Производитель видеокарты -->
+            </column>
+            <column name="manufacturer_code" type="VARCHAR(255)">
+                <!-- Код производителя видеокарты -->
+            </column>
+            <column name="interface" type="VARCHAR(255)">
+                <!-- Интерфейс видеокарты -->
+            </column>
+
+            <!-- Характеристики дополнительных опций видеокарты -->
+            <column name="tgp" type="INT">
+                <!-- TGP (Total Graphics Power) видеокарты -->
+            </column>
+            <column name="backlight" type="BOOLEAN">
+                <!-- Наличие подсветки -->
+            </column>
+            <column name="dimensions" type="VARCHAR(255)">
+                <!-- Размеры видеокарты (ШхВхГ) -->
+            </column>
+            <column name="weight" type="DECIMAL(5,2)">
+                <!-- Вес видеокарты -->
+            </column>
+            <column name="manufacturer_website" type="VARCHAR(255)">
+                <!-- Сайт производителя -->
+            </column>
+            <column name="extra_power_required" type="BOOLEAN">
+                <!-- Необходимость дополнительного питания -->
+            </column>
+            <column name="power_connector" type="VARCHAR(255)">
+                <!-- Разъем дополнительного питания -->
+            </column>
+            <column name="supply_type" type="VARCHAR(255)">
+                <!-- Тип поставки -->
+            </column>
+            <column name="monitor_support" type="INT">
+                <!-- Количество поддерживаемых мониторов -->
+            </column>
+            <column name="max_resolution" type="VARCHAR(255)">
+                <!-- Максимальное разрешение -->
+            </column>
+            <column name="recommended_power_supply" type="INT">
+                <!-- Рекомендуемая мощность блока питания -->
+            </column>
+
+            <!-- Характеристики видеопроцессора -->
+            <column name="oc_version" type="BOOLEAN">
+                <!-- Наличие OC версии -->
+            </column>
+            <column name="gpu_architecture" type="VARCHAR(255)">
+                <!-- Архитектура графического процессора -->
+            </column>
+            <column name="gpu_code_name" type="VARCHAR(255)">
+                <!-- Кодовое название графического процессора -->
+            </column>
+            <column name="tech_process" type="INT">
+                <!-- Техпроцесс -->
+            </column>
+            <column name="gpu_frequency" type="INT">
+                <!-- Частота графического процессора -->
+            </column>
+            <column name="universal_processors" type="INT">
+                <!-- Число универсальных процессоров -->
+            </column>
+            <column name="sli_crossfire_support" type="BOOLEAN">
+                <!-- Поддержка SLI/CrossFire -->
+            </column>
+            <column name="directx_support" type="VARCHAR(255)">
+                <!-- Поддержка DirectX -->
+            </column>
+            <column name="opengl_support" type="VARCHAR(255)">
+                <!-- Поддержка OpenGL -->
+            </column>
+
+            <!-- Характеристики памяти видеокарты -->
+            <column name="memory_size" type="INT">
+                <!-- Объем памяти -->
+            </column>
+            <column name="memory_type" type="VARCHAR(255)">
+                <!-- Тип памяти -->
+            </column>
+            <column name="memory_bus_width" type="INT">
+                <!-- Шина памяти (разрядность) -->
+            </column>
+            <column name="memory_frequency" type="INT">
+                <!-- Частота видеопамяти -->
+            </column>
+
+            <!-- Конструкция видеокарты -->
+            <column name="occupied_slots" type="INT">
+                <!-- Количество занимаемых слотов -->
+            </column>
+            <column name="low_profile_card" type="BOOLEAN">
+                <!-- Низкопрофильная карта (Low Profile) -->
+            </column>
+            <column name="cooling_system" type="VARCHAR(255)">
+                <!-- Система охлаждения -->
+            </column>
+            <column name="ports" type="VARCHAR(255)">
+                <!-- Разъемы -->
+            </column>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <sql splitStatements="true">
+            ALTER TABLE pc_video_card
+            ALTER COLUMN created_at SET DEFAULT NOW(),
+            ALTER COLUMN updated_at SET DEFAULT NOW();
+
+            CREATE TRIGGER set_timestamp
+            BEFORE
+            UPDATE ON pc_video_card
+            FOR EACH ROW
+            EXECUTE PROCEDURE trigger_set_timestamp();
+        </sql>
+
+        <!-- Откат создания таблицы. -->
+        <rollback>
+            <dropTable tableName="pc_video_card"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
